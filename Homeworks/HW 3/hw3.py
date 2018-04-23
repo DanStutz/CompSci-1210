@@ -164,8 +164,36 @@ class Boggle():
 ##################################################################################################################
     def solve(self):
         # recursive
-       # for i in range(len(size)):
-           # for j in range(len(size)):
-                # cannot go in direction such as (-1, 0) or (0, -1)
-                # check if it is a legal position/path
-        pass
+        # Check if the position is valid
+        def isLegal(i, j):
+            return(0 <= i < self.size and 0 <= j < self.size)
+
+        # Recursive helper function
+        def find(i, j, T, path):
+            L = []
+
+            # Base case
+            if isinstance(T, str):
+                L.extend(T)
+
+            # Recursive step
+            else:
+                for x in ((0, 1), (1, 0), (-1, 0), (0, -1)):
+                    if isLegal(i + x[0], j + x[1]) and self.board[i][j] in T.keys() and (i + x[0], j + x[0]) not in path:
+                        L.extend(find(i + x[0], j + x[1], T[self.board[i][j]], path + [(i, j)]))
+            
+            return L
+
+        L = []
+
+        # Invoke the helper function while iterating over the size of the Boggle board
+        for i in range(self.size):
+            for j in range(self.size):
+                L.extend(find(i, j, self.T, []))
+
+        L = ''.join(L)
+        s = self.size
+
+        L = [L[i:i + s] for i in range(0, len(L), s)]
+
+        return L
